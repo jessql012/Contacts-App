@@ -11,20 +11,20 @@
 
       <v-container class="body">
         <v-autocomplete
-          v-model="search"
+          v-model="selected"
+          :search-input.sync="search"
           :items="contacts"
           :color="theme"
           item-text = "name"
           item-value = "id"
-          auto-select-first
           append-outer-icon="mdi-magnify"
-          hide-no-data
+          auto-select-first
           hide-selected
           allow-overflow
           placeholder="Start typing to search for a contact..."
           return-object
-          @change="onSearch"
-          @click:append-outer="onSearch"
+          @change="selectOption"
+          @click:append-outer="searchInput"
         ></v-autocomplete>
         <v-alert v-model="showAlert" border="left" :color="theme" dark dismissible>
           Contact not found.
@@ -70,6 +70,7 @@ export default{
             contacts: [],
             numContacts: 0,
             search: null,
+            selected: null,
             showAlert: false,
             theme: 'light-green darken-2',
         }
@@ -81,7 +82,7 @@ export default{
                 for (let i = 0; i < getResponse.data.length; i++) {
                     this.contacts.push(getResponse.data[i]);
                 }
-                
+
                 // Sort alphabetically
                 this.contacts = this.contacts.sort((a, b) =>
                     a.name.localeCompare(b.name, 'en', { sensitivity: 'base' })
@@ -90,18 +91,50 @@ export default{
 
             this.numContacts = this.contacts.length;
         },
-        onSearch() {
+        searchInput() {
+            // Input based search
+
             if (this.search == null) {
                 this.showAlert = true
+                return;
             }
-            else {
+
+            // Find first option in auto complete
+            var filteredContacts= this.contacts.filter(person => {
+                // include in filtered array if input substring starts at the beginning of contact name
+                // e.g "Chelsey Dietrich" is a valid autocomplete option for the input string "Chels"
+                return person.name.toLowerCase().indexOf(this.search.toLowerCase()) == 0
+            });
+            
+            if (filteredContacts.length == 0) { // If there are no auto complete options then input is invalid
+                this.showAlert = true
+            }
+            else { // Choose the first auto complete option
                 this.showAlert = false
+
                 // Set a timer for the animation
                 const delay = ms => new Promise(result => setTimeout(result, ms));
 
                 var deck = document.getElementById('deck');
                 for (let i = 0; i < deck.children.length; i++) {
-                    if (deck.children[i].id == this.search.id) {
+                    if (deck.children[i].id == filteredContacts[0].id) {
+                        deck.children[i].scrollIntoView({behavior: 'smooth', block: 'center'}); // Scroll to card
+                        deck.children[i].classList.add('expand') // Play animation
+                        delay(2000).then(() => {
+                            deck.children[i].classList.remove('expand')});
+                    }
+                }
+            }
+        },
+        selectOption() {
+            // Selection based search
+            this.showAlert = false
+            if (this.selected != null) {
+                const delay = ms => new Promise(result => setTimeout(result, ms));
+
+                var deck = document.getElementById('deck');
+                for (let i = 0; i < deck.children.length; i++) {
+                    if (deck.children[i].id == this.selected.id) {
                         deck.children[i].scrollIntoView({behavior: 'smooth', block: 'center'}); // Scroll to card
                         deck.children[i].classList.add('expand') // Play animation
                         delay(2000).then(() => {

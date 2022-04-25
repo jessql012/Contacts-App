@@ -24,7 +24,10 @@
         <b>Username: </b>{{ person.username }} <br>
         <b>Email: </b>{{ person.email }} <br>
         <b>Phone: </b>{{ person.phone }} <br>
-        <b>Website: </b>{{ person.website }} <br>
+        <b>Website: </b>
+            <a :href="person.website">
+                {{ person.website }}
+            </a><br>
         <b>Company: </b>{{ person.company.name }} <br>
         <b>Company Catchphrase: </b>{{ person.company.catchPhrase }} <br>
         <b>Company BS: </b>{{ person.company.bs }} <br>
