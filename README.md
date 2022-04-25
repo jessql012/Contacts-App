@@ -1,4 +1,4 @@
-# Contacts application\
+# Contacts application
 
 Deployed at:
 
