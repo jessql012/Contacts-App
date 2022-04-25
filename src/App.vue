@@ -1,28 +1,40 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <v-app>
+    <v-main>
+      <ContactsMain/>
+    </v-main>
+    <v-footer app light>
+    <v-spacer></v-spacer>
+    Developed by Jessica Liu
+    </v-footer>
+  </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import ContactsMain from './components/ContactsMain.vue';
 
 export default {
   name: 'App',
+
   components: {
-    HelloWorld
-  }
-}
+    ContactsMain,
+  },
+
+  data: () => ({
+    //
+  }),
+};
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+<style lang="scss">
+@import "./scss/variables.scss";
+
+
+.v-application {
+  font-family: $body-font-family, sans-serif !important;
+  .title { // To pin point specific classes of some components
+      font-family: $title-font, sans-serif !important;
+  }
 }
+
 </style>
